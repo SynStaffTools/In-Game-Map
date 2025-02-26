@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>PS_Bramus.GoogleMapsTileCutter</title>
+		<meta charset="utf-8" />
+		<style>
+			html, body {
+				height: 100%;
+				margin: 0;
+				padding: 0;
+			}
+			#map {
+				width:100%;
+				height:100%;
+				color: #CCC;
+				background: #EFEFEF;
+			}
+			span.loading {
+				display: block;
+				text-align: center;
+				font: 300 italic 72px/400px "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", sans-serif;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="map"><span class="loading">loading tiles...</span></div>
+		<script>(g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})
+        ({key: "AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg", v: "weekly"});</script>		
+		<script>
+
+
+			/*
+			 * = PS_Bramus.GoogleMapsTileCutter Config
+			 * ----------------
+			 */
+
+				var repeatOnXAxis = true; // Do we need to repeat the image on the X-axis? Most likely you'll want to set this to false
+
+
+
+			/*
+			 * Helper function which normalizes the coords so that tiles can repeat across the X-axis (horizontally) like the standard Google map tiles.
+			 * ----------------
+			 */
+
+				function getNormalizedCoord(coord, zoom) {
+					if (!repeatOnXAxis) return coord;
+
+					var y = coord.y;
+					var x = coord.x;
+
+					// tile range in one direction range is dependent on zoom level
+					// 0 = 1 tile, 1 = 2 tiles, 2 = 4 tiles, 3 = 8 tiles, etc
+					var tileRange = 1 << zoom;
+
+					// don't repeat across Y-axis (vertically)
+					if (y < 0 || y >= tileRange) {
+						return null;
+					}
+
+					// repeat across X-axis
+					if (x < 0 || x >= tileRange) {
+						x = (x % tileRange + tileRange) % tileRange;
+					}
+
+					return {
+						x: x,
+						y: y
+					};
+
+				}
+
+
+			/*
+			 * Main Core
+			 * ----------------
+			 */
+
+				window.onload = function() {
+
+					// Define our custom map type
+					var customMapType = new google.maps.ImageMapType({
+						getTileUrl: function(coord, zoom) {
+							var normalizedCoord = getNormalizedCoord(coord, zoom);
+							if(normalizedCoord && (normalizedCoord.x < Math.pow(2, zoom)) && (normalizedCoord.x > -1) && (normalizedCoord.y < Math.pow(2, zoom)) && (normalizedCoord.y > -1)) {
+								return zoom + '/' + normalizedCoord.x + '/' + normalizedCoord.y + '.png';
+							} else {
+								return 'empty.png';
+							}
+						},
+						tileSize: new google.maps.Size(256, 256),
+						maxZoom: 7,
+						name: 'PS_Bramus.GoogleMapsTileCutter'
+					});
+
+					// Basic options for our map
+					var myOptions = {
+						center: new google.maps.LatLng(0, 0),
+						zoom: 2,
+						minZoom: 0,
+						streetViewControl: false,
+						mapTypeControl: true,
+						mapTypeControlOptions: {
+							mapTypeIds: ["custom"]
+						}
+					};
+
+					// Init the map and hook our custom map type to it
+					var map = new google.maps.Map(document.getElementById('map'), myOptions);
+					map.mapTypes.set('custom', customMapType);
+					map.setMapTypeId('custom');
+
+				}
+
+				async function initMap() {
+  // Request needed libraries.
+  const { Map } = await google.maps.importLibrary("maps");
+  const myLatlng = { lat: -25.363, lng: 131.044 };
+  const map = new google.maps.Map(document.getElementById("map"), {
+    zoom: 4,
+    center: myLatlng,
+  });
+  // Create the initial InfoWindow.
+  let infoWindow = new google.maps.InfoWindow({
+    content: "Click the map to get Lat/Lng!",
+    position: myLatlng,
+  });
+
+  infoWindow.open(map);
+  // Configure the click listener.
+  map.addListener("click", (mapsMouseEvent) => {
+    // Close the current InfoWindow.
+    infoWindow.close();
+    // Create a new InfoWindow.
+    infoWindow = new google.maps.InfoWindow({
+      position: mapsMouseEvent.latLng,
+    });
+    infoWindow.setContent(
+      JSON.stringify(mapsMouseEvent.latLng.toJSON(), null, 2),
+    );
+    infoWindow.open(map);
+  });
+}
+
+initMap();
+		</script>
+
+	</body>
+</html>
