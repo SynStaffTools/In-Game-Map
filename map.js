@@ -338,11 +338,11 @@ const MapBase = {
     $('.lat-lng-container').css('display', 'block');
 
     $('.lat-lng-container p').html(`
-                      Latitude: ${parseFloat(coords.latlng.lat.toFixed(4))}
-                      <br>Longitude: ${parseFloat(coords.latlng.lng.toFixed(4))}
-                             <br>X: ${xy.long}
-                      <br>Y: ${xy.lati}}
-                    `);
+      Latitude: ${parseFloat(coords.latlng.lat.toFixed(4))}
+      <br>Longitude: ${parseFloat(coords.latlng.lng.toFixed(4))}
+      <br>X: ${xy.long}
+      <br>Y: ${xy.lati}
+  `);
 
     $('#lat-lng-container-close-button').click(function () {
       $('.lat-lng-container').css('display', 'none');
@@ -394,3 +394,59 @@ $('.menu-toggle').click(function () {
 
 
 });
+
+// // Define the bounds for the custom map (adjust to match your map's dimensions)
+// var mapBounds = [[-2000, -2000], [2000, 2000]]; 
+
+// // Load custom tiles (adjust the tile path as needed)
+// L.tileLayer('tiles/{z}/{x}/{y}.png', {
+//   noWrap: true,
+//   bounds: mapBounds
+// }).addTo(MapBase.map);
+
+
+// // Set the initial view (adjust coordinates and zoom to fit your map)
+// map.fitBounds(mapBounds);
+
+// Function to parse CSV and add ranch locations to the map
+function parseCSV(csvText) {
+  if (!MapBase.map) {
+    console.error("MapBase.map is not initialized!");
+    return;
+  }
+
+  const rows = csvText.split(/\r?\n/).map(row => row.trim()).filter(row => row.length > 0);
+  rows.shift(); // Remove header row
+
+  rows.forEach((row, index) => {
+    const columns = row.split(",");
+    if (columns.length >= 5) {
+      const id = columns[0].trim(); // ID column
+      const name = columns[3].trim(); // Ranch name
+      let coordsText = columns.slice(4).join(",").trim(); // Handle full coordinate field
+
+      try {
+        // Fix JSON formatting issues
+        coordsText = coordsText.replace(/""/g, '"'); // Fix double double-quotes
+        if (coordsText.startsWith('"') && coordsText.endsWith('"')) {
+          coordsText = coordsText.slice(1, -1); // Remove outer quotes
+        }
+        const coords = JSON.parse(coordsText); // Convert to object
+
+        // Ensure coordinates are valid numbers
+        if (coords && typeof coords.x === "number" && typeof coords.y === "number") {
+          console.log(`Adding marker for: ${name} (ID: ${id}) at [${coords.y}, ${coords.x}]`);
+
+          // Pass both ID and name to the function
+          MapBase.gameToMapAndMarkTepo(coords.x, coords.y, `${name} (ID: ${id})`);
+        } else {
+          console.warn(`Invalid coordinates on line ${index + 2}: ${row}`, coords);
+        }
+      } catch (error) {
+        console.error(`Error parsing coordinates on line ${index + 2}: ${row}`, error);
+      }
+    } else {
+      console.warn(`Skipping invalid row ${index + 2}: ${row}`);
+    }
+  });
+}
