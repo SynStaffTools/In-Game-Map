@@ -507,6 +507,8 @@ function deactivateTool() {
     MapBase.map.off('click', onRadiusClick);
     clearRadius();
     toggleRadiusButton.innerText = 'Enable Radius';  // Update button text
+    radiusCenter = null;  // Reset the radius center when deactivating the radius tool
+    console.log("Radius center cleared.");
   }
   
   activeTool = null;  // Reset active tool
@@ -683,7 +685,7 @@ function clearRadius() {
     radiusCenterPin = null;
   }
 
-  // Reset the center for the next measurement (do not reset unless necessary)
+  // Do not reset radiusCenter here, it's already reset in deactivateTool
   console.log("Previous radius elements cleared.");
 }
 
