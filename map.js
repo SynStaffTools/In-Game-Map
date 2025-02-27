@@ -119,10 +119,20 @@ const MapBase = {
   markersGroup: null,
   markersTepoGroup: null,
   filtersData: [
-    { lat: '-5491.304', lng: '-2939.538', name: 'Tumbleweed Shop', category: 'Gov Shops' }
+    { lat: '-5491.304', lng: '-2939.538', name: 'Tumbleweed Shop', category: 'Gov Shops' },
+    { lat: '-5410.399', lng: '-2934.017', name: 'Sale Barn', category: 'Sale Barns' },
+    { lat: '-3661.098', lng: '-2564.532', name: 'Sale Barn', category: 'Sale Barns' },
+    { lat: '-853.099', lng: '-1337.900', name: 'Sale Barn', category: 'Sale Barns' },
+    { lat: '-1837.167', lng: '-438.533', name: 'Sale Barn', category: 'Sale Barns' },
+    { lat: '-217.241', lng: '635.365', name: 'Sale Barn', category: 'Sale Barns' },
+    { lat: '1332.172', lng: '-1271.772', name: 'Sale Barn', category: 'Sale Barns' },
+    { lat: '2393.295', lng: '-1416.426', name: 'Sale Barn', category: 'Sale Barns' },
+    { lat: '2936.933', lng: '1312.263', name: 'Sale Barn', category: 'Sale Barns' },
+    { lat: '-1304.950', lng: '2421.786', name: 'Sale Barn', category: 'Sale Barns' }
   ],
   markerCategories: {
     'Gov Shops': 'Gov Shops',
+    'Sale Barns': 'Sale Barns',
   },
   currentFilters: [],
   // Query adjustable parameters
@@ -394,19 +404,6 @@ $('.menu-toggle').click(function () {
 
 
 });
-
-// // Define the bounds for the custom map (adjust to match your map's dimensions)
-// var mapBounds = [[-2000, -2000], [2000, 2000]]; 
-
-// // Load custom tiles (adjust the tile path as needed)
-// L.tileLayer('tiles/{z}/{x}/{y}.png', {
-//   noWrap: true,
-//   bounds: mapBounds
-// }).addTo(MapBase.map);
-
-
-// // Set the initial view (adjust coordinates and zoom to fit your map)
-// map.fitBounds(mapBounds);
 
 // Function to parse CSV and add ranch locations to the map
 function parseCSV(csvText) {
