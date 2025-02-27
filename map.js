@@ -451,31 +451,69 @@ function parseCSV(csvText) {
 let rulerPoints = [];
 let rulerLine = null;
 let rulerLabel = null;
+let radiusCenter = null;
+let radiusCircle = null;
+let radiusLabel = null;
+let radiusCenterPin = null;  // Add a reference to the center pin
 
-// Define the scale factor based on your known measurements
-const scaleFactor = 64.5;  // Example: 1 map unit = 64.5 real-world units
+let activeTool = null;  // Variable to track the currently active tool
 
+// Side Menu buttons
+const toggleRulerButton = document.getElementById('toggleRuler');
+const toggleRadiusButton = document.getElementById('toggleRadius');
+
+// Activate the Ruler tool
 function activateRulerTool() {
   if (!MapBase || !MapBase.map) {
     console.error("MapBase.map is not initialized!");
     return;
   }
 
-  // Ensure event listeners aren't duplicated
-  deactivateRulerTool(); 
+  deactivateTool();  // Deactivate any active tool first
 
+  activeTool = 'ruler';  // Mark ruler as active
   MapBase.map.on('click', onRulerClick);
   console.log("Ruler tool activated. Click two points to measure distance.");
+  toggleRulerButton.innerText = 'Disable Ruler';  // Update button text
 }
 
-function deactivateRulerTool() {
+// Activate the Radius tool
+function activateRadiusTool() {
+  if (!MapBase || !MapBase.map) {
+    console.error("MapBase.map is not initialized!");
+    return;
+  }
+
+  deactivateTool();  // Deactivate any active tool first
+
+  activeTool = 'radius';  // Mark radius as active
+  MapBase.map.on('click', onRadiusClick);
+  console.log("Radius tool activated. Click on a point to define the center.");
+  toggleRadiusButton.innerText = 'Disable Radius';  // Update button text
+
+  // Adjust zoom level when radius tool is activated
+  MapBase.map.setZoom(5);  // Set the zoom level to something higher
+}
+
+// Deactivate the active tool
+function deactivateTool() {
   if (!MapBase || !MapBase.map) return;
 
-  MapBase.map.off('click', onRulerClick);
-  clearRuler();
-  console.log("Ruler tool deactivated.");
+  if (activeTool === 'ruler') {
+    MapBase.map.off('click', onRulerClick);
+    clearRuler();
+    toggleRulerButton.innerText = 'Enable Ruler';  // Update button text
+  } else if (activeTool === 'radius') {
+    MapBase.map.off('click', onRadiusClick);
+    clearRadius();
+    toggleRadiusButton.innerText = 'Enable Radius';  // Update button text
+  }
+  
+  activeTool = null;  // Reset active tool
+  console.log("Tool deactivated.");
 }
 
+// Ruler tool logic
 function onRulerClick(event) {
   if (!event || !event.latlng) {
     console.error("Invalid click event detected.");
@@ -506,7 +544,7 @@ function drawRuler() {
 
   const [point1, point2] = rulerPoints;
   const rawDistance = calculateDistance(point1, point2);
-  const realWorldDistance = rawDistance * scaleFactor;  // Apply the scale factor
+  const realWorldDistance = rawDistance * 64.5;  // Apply the scale factor
 
   console.log(`Raw distance: ${rawDistance.toFixed(2)} units`);
   console.log(`Real-world distance: ${realWorldDistance.toFixed(2)} units`);
@@ -517,10 +555,10 @@ function drawRuler() {
   // Draw the measurement line
   rulerLine = L.polyline([[point1.y, point1.x], [point2.y, point2.x]], { color: 'red' })
     .addTo(MapBase.map);
-  
+
   console.log("Line drawn between points.");
 
-  // Place label at the midpoint with the real-world distance
+  // Place label at the midpoint
   const midPoint = { x: (point1.x + point2.x) / 2, y: (point1.y + point2.y) / 2 };
   rulerLabel = L.marker([midPoint.y, midPoint.x], {
     icon: L.divIcon({
@@ -547,12 +585,132 @@ function clearRuler() {
   }
 }
 
+// Radius tool logic
+function onRadiusClick(event) {
+  if (!event || !event.latlng) {
+    console.error("Invalid click event detected.");
+    return;
+  }
+
+  const { lat, lng } = event.latlng;
+  console.log(`Clicked at: ${lat}, ${lng}`);
+
+  if (!radiusCenter) {
+    // Set the center of the circle
+    radiusCenter = { x: lng, y: lat };
+    console.log("Radius center set.");
+
+    // Optionally, draw a marker at the center
+    radiusCenterPin = L.marker([lat, lng]).addTo(MapBase.map).bindPopup("Radius center").openPopup();
+  } else {
+    // Calculate the radius in map units
+    const radius = calculateDistance(radiusCenter, { x: lng, y: lat });
+    console.log(`Radius calculated: ${radius.toFixed(2)} units`);
+    drawRadius(radius);
+  }
+}
+
+function drawRadius(radius) {
+  if (!MapBase || !MapBase.map) {
+    console.error("MapBase.map is not initialized.");
+    return;
+  }
+
+  // Ensure that radiusCenter is valid before using it
+  if (!radiusCenter || radiusCenter.x == null || radiusCenter.y == null) {
+    console.error("Invalid radiusCenter at the time of drawing circle.");
+    return;
+  }
+
+  console.log(`Drawing circle at (${radiusCenter.y}, ${radiusCenter.x}) with radius: ${radius.toFixed(2)} units`);
+
+  // Apply the scale factor only to the label text, not to the circle radius
+  const realWorldRadius = radius * 64.5;  // Apply scaling to the radius text
+  const realWorldDiameter = realWorldRadius * 2;  // Calculate diameter
+
+  // Log the real-world radius and diameter for debugging purposes
+  console.log("Real-world radius:", realWorldRadius.toFixed(2));
+  console.log("Real-world diameter:", realWorldDiameter.toFixed(2));
+
+  // Clear any existing radius elements before drawing a new one
+  clearRadius();
+
+  // Draw the circle at the radiusCenter location with the original radius (no scaling)
+  if (radiusCenter && radiusCenter.y != null && radiusCenter.x != null) {
+    radiusCircle = L.circle([radiusCenter.y, radiusCenter.x], {
+      color: 'blue',
+      fillColor: 'blue',
+      fillOpacity: 0.2,
+      radius: radius  // Use the original radius
+    }).addTo(MapBase.map);
+
+    console.log(`Circle drawn with radius: ${radius} units at location: (${radiusCenter.y}, ${radiusCenter.x})`);
+
+    // Add a label with both the scaled radius and diameter
+    const label = L.divIcon({
+      className: 'radius-label',
+      html: `<div style="background: white; padding: 5px 10px; border: 2px solid black; border-radius: 5px; text-align: center; font-weight: bold; width: auto; display: inline-block; min-width: 50px;">
+               Radius: ${realWorldRadius.toFixed(2)} units<br>
+               Diameter: ${realWorldDiameter.toFixed(2)} units
+            </div>`
+    });
+
+    // Create a marker for the label and position it at the center of the circle
+    radiusLabel = L.marker([radiusCenter.y, radiusCenter.x], { icon: label }).addTo(MapBase.map);
+
+    console.log("Label added with radius and diameter units.");
+  } else {
+    console.error("Invalid radiusCenter when attempting to draw the circle.");
+  }
+}
+
+// Clear previous radius and label
+function clearRadius() {
+  console.log("Clearing previous radius elements...");
+
+  if (radiusCircle) {
+    MapBase.map.removeLayer(radiusCircle);
+    radiusCircle = null;
+  }
+
+  if (radiusLabel) {
+    MapBase.map.removeLayer(radiusLabel);  // Remove the label as well
+    radiusLabel = null;
+  }
+
+  if (radiusCenterPin) {
+    MapBase.map.removeLayer(radiusCenterPin);  // Remove the center pin
+    radiusCenterPin = null;
+  }
+
+  // Reset the center for the next measurement (do not reset unless necessary)
+  console.log("Previous radius elements cleared.");
+}
+
 function calculateDistance(p1, p2) {
   const dx = p2.x - p1.x;
   const dy = p2.y - p1.y;
   return Math.sqrt(dx * dx + dy * dy); // Euclidean distance
 }
 
+// Event listeners for toggle buttons
+toggleRulerButton.addEventListener('click', () => {
+  if (activeTool === 'ruler') {
+    deactivateTool();
+  } else {
+    activateRulerTool();
+  }
+});
+
+toggleRadiusButton.addEventListener('click', () => {
+  if (activeTool === 'radius') {
+    deactivateTool();
+  } else {
+    activateRadiusTool();
+  }
+});
+
 window.onload = () => {
-  activateRulerTool();
+  // Initially, you can activate either tool if needed
+  // activateRulerTool();  // For now, it's set to ruler tool by default
 };
