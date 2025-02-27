@@ -447,3 +447,112 @@ function parseCSV(csvText) {
     }
   });
 }
+
+let rulerPoints = [];
+let rulerLine = null;
+let rulerLabel = null;
+
+// Define the scale factor based on your known measurements
+const scaleFactor = 64.5;  // Example: 1 map unit = 64.5 real-world units
+
+function activateRulerTool() {
+  if (!MapBase || !MapBase.map) {
+    console.error("MapBase.map is not initialized!");
+    return;
+  }
+
+  // Ensure event listeners aren't duplicated
+  deactivateRulerTool(); 
+
+  MapBase.map.on('click', onRulerClick);
+  console.log("Ruler tool activated. Click two points to measure distance.");
+}
+
+function deactivateRulerTool() {
+  if (!MapBase || !MapBase.map) return;
+
+  MapBase.map.off('click', onRulerClick);
+  clearRuler();
+  console.log("Ruler tool deactivated.");
+}
+
+function onRulerClick(event) {
+  if (!event || !event.latlng) {
+    console.error("Invalid click event detected.");
+    return;
+  }
+
+  const { lat, lng } = event.latlng;
+  console.log(`Clicked at: ${lat}, ${lng}`);
+
+  if (rulerPoints.length === 0) {
+    // Clear previous measurement when starting a new one
+    clearRuler();
+  }
+
+  rulerPoints.push({ x: lng, y: lat });
+
+  if (rulerPoints.length === 2) {
+    console.log("Two points selected, drawing ruler...");
+    drawRuler();
+  }
+}
+
+function drawRuler() {
+  if (!MapBase || !MapBase.map || rulerPoints.length < 2) {
+    console.error("MapBase.map is not initialized or insufficient points.");
+    return;
+  }
+
+  const [point1, point2] = rulerPoints;
+  const rawDistance = calculateDistance(point1, point2);
+  const realWorldDistance = rawDistance * scaleFactor;  // Apply the scale factor
+
+  console.log(`Raw distance: ${rawDistance.toFixed(2)} units`);
+  console.log(`Real-world distance: ${realWorldDistance.toFixed(2)} units`);
+
+  // Remove previous elements if they exist
+  clearRuler();
+
+  // Draw the measurement line
+  rulerLine = L.polyline([[point1.y, point1.x], [point2.y, point2.x]], { color: 'red' })
+    .addTo(MapBase.map);
+  
+  console.log("Line drawn between points.");
+
+  // Place label at the midpoint with the real-world distance
+  const midPoint = { x: (point1.x + point2.x) / 2, y: (point1.y + point2.y) / 2 };
+  rulerLabel = L.marker([midPoint.y, midPoint.x], {
+    icon: L.divIcon({
+      className: 'ruler-label',
+      html: `<div style="background: white; padding: 0px 30px; border: 1px solid black; display: flex; justify-content: center; align-items: center; text-align: center;">${realWorldDistance.toFixed(2)} units</div>`
+    })
+  }).addTo(MapBase.map);
+
+  console.log("Label added at midpoint.");
+
+  // Reset points for next measurement
+  rulerPoints = [];
+}
+
+function clearRuler() {
+  console.log("Clearing previous ruler elements...");
+  if (rulerLine) {
+    MapBase.map.removeLayer(rulerLine);
+    rulerLine = null;
+  }
+  if (rulerLabel) {
+    MapBase.map.removeLayer(rulerLabel);
+    rulerLabel = null;
+  }
+}
+
+function calculateDistance(p1, p2) {
+  const dx = p2.x - p1.x;
+  const dy = p2.y - p1.y;
+  return Math.sqrt(dx * dx + dy * dy); // Euclidean distance
+}
+
+window.onload = () => {
+  activateRulerTool();
+};
