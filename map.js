@@ -119,7 +119,7 @@ const MapBase = {
   markersGroup: null,
   markersTepoGroup: null,
   filtersData: [
-    { lat: '-5491.304', lng: '-2939.538', name: 'Tumbleweed Shop', category: 'Gov Shops' },
+    { lat: '-5491.304', lng: '-2939.538', name: 'Tumbleweed General Store', category: 'Gov Shops' },
     { lat: '-5410.399', lng: '-2934.017', name: 'Sale Barn', category: 'Sale Barns' },
     { lat: '-3661.098', lng: '-2564.532', name: 'Sale Barn', category: 'Sale Barns' },
     { lat: '-853.099', lng: '-1337.900', name: 'Sale Barn', category: 'Sale Barns' },
@@ -284,17 +284,21 @@ const MapBase = {
     MapBase.filterMarkers();
   },
 
-  gameToMapAndMark: function (lat, lng, name) {
+  gameToMapAndMark: function (lat, lng, name, category) {
     const lati = (0.01552 * lng + -63.6).toFixed(4);
     const long = (0.01552 * lat + 111.29).toFixed(4);
-    MapBase.markMap(lati, long, name);
+    
+    // Pass category to markMap
+    MapBase.markMap(lati, long, name, category);  
+    
     return { name, lati, long };
   },
 
-  gameToMapAndMarkTepo: function (lat, lng, name) {
+
+  gameToMapAndMarkTepo: function (lat, lng, name, category) {
     const lati = (0.01552 * lng + -63.6).toFixed(4);
     const long = (0.01552 * lat + 111.29).toFixed(4);
-    MapBase.markMapTepo(lati, long, name);
+    MapBase.markMapTepo(lati, long, name, category);
     return { name, lati, long };
   },
 
@@ -315,18 +319,25 @@ const MapBase = {
     }));
   },
 
-  markMap: function (lat, long, name) {
-    MapBase.map.addLayer(MapBase.markersGroup);
-    
-    var icon = L.divIcon({
-      className: 'custom-div-icon',
-      html: "<div style='background-color:#c30b82;' class='marker-pin'></div><i class='material-icons'>shopping_cart</i>",
-      iconSize: [27, 38 ],
-      iconAnchor: [15, 42]
-  });
-    var marker = L.marker([lat, long], {icon: icon}).addTo(MapBase.markersGroup);
+  markMap: function (lat, long, name, category) {
+    // Define a mapping of categories to custom icons
+    const iconMap = {
+        'Sale Barns': 'images/blip-sale-barn.png',
+        'Ranches': 'images/blip-ranch.png',
+        'Gov Shops': 'images/blip-shop.png',
+        'Default': 'images/blip-default.png'
+    };
+
+    // Choose the correct icon based on category, or use the default if not listed
+    var icon = L.icon({
+        iconUrl: iconMap[category] || iconMap['Default'],  
+        iconSize: [32, 32], 
+        iconAnchor: [16, 32]  
+    });
+
+    var marker = L.marker([lat, long], { icon: icon }).addTo(MapBase.markersGroup);
     marker.bindPopup(`<b>${name}</b>`);
-  },
+},
 
   markMapTepo: function (lat, long, name) {
 
@@ -374,7 +385,7 @@ const MapBase = {
     this.markersGroup.clearLayers();
     this.filtersData.forEach(marker => {
       if (this.currentFilters.includes(marker.category)) {
-        this.gameToMapAndMark(marker.lat, marker.lng, marker.name);
+        this.gameToMapAndMark(marker.lat, marker.lng, marker.name, marker.category);
       }
     });
   },
