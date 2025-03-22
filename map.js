@@ -387,11 +387,20 @@ MapBase.init();
 
 
 $('.line').click(function () {
-  MapBase.markersTepoGroup.clearLayers();
-  var text1 = $('.coords1').val();
-  var text2 = $('.coords2').val();
+  var text1 = $('.coords1').val().trim();  // Get user input
+  var text2 = $('.coords2').val().trim();
+
+  // Easter Egg: Check if "80085" is entered
+  if (text1 === "80085" || text2 === "80085") {
+      console.log("Easter egg triggered! 🎉");
+      showEasterEgg();
+      return;  // Stop the normal map search
+  }
+
+  // Continue normal map search if no Easter egg match
   MapBase.markerPoints(text1, text2);
 });
+
 
 $('.menu-toggle').click(function () {
   if($('.menu-toggle').text() == '>'){
@@ -711,6 +720,25 @@ toggleRadiusButton.addEventListener('click', () => {
     activateRadiusTool();
   }
 });
+
+function showEasterEgg() {
+  // Create the GIF overlay element
+  const gifOverlay = document.createElement('div');
+  gifOverlay.style.position = 'fixed';
+  gifOverlay.style.top = '50%';
+  gifOverlay.style.left = '50%';
+  gifOverlay.style.transform = 'translate(-50%, -50%)';
+  gifOverlay.style.zIndex = '1000';
+  gifOverlay.style.pointerEvents = 'none';  // So it doesn't interfere with interactions
+  gifOverlay.innerHTML = `<img src="https://media.giphy.com/media/qW3iR9I30ndCM/giphy.gif" style="width:300px; height:auto;">`;
+
+  document.body.appendChild(gifOverlay);
+
+  // Remove the GIF after 3 seconds
+  setTimeout(() => {
+      gifOverlay.remove();
+  }, 3000);
+}
 
 window.onload = () => {
   // Initially, you can activate either tool if needed
