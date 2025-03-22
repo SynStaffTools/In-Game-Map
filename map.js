@@ -730,7 +730,7 @@ function showEasterEgg() {
   gifOverlay.style.transform = 'translate(-50%, -50%)';
   gifOverlay.style.zIndex = '1000';
   gifOverlay.style.pointerEvents = 'none';  // So it doesn't interfere with interactions
-  gifOverlay.innerHTML = `<img src="https://media.giphy.com/media/qW3iR9I30ndCM/giphy.gif" style="width:500px; height:auto;">`;
+  gifOverlay.innerHTML = `<img src="https://media.giphy.com/media/qW3iR9I30ndCM/giphy.gif" style="width:400px; height:auto;">`;
 
   document.body.appendChild(gifOverlay);
 
