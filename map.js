@@ -339,14 +339,19 @@ const MapBase = {
     marker.bindPopup(`<b>${name}</b>`);
 },
 
-  markMapTepo: function (lat, long, name) {
+  markMapTepo: function (lat, long, name, category) {
+    const iconMap = {
+        'Sale Barns': 'images/blip-sale-barn.png',
+        'Ranches': 'images/blip-ranch.png',
+        'Gov Shops': 'images/blip-shop.png',
+        'Default': 'images/blip-default.png'
+    };
 
-    icon = L.divIcon({
-      className: 'custom-div-icon',
-      html: "<div style='background-color:#ff6b47;' class='marker-pin'></div><i class='material-icons'>search</i>",
-      iconSize: [27, 38 ],
-      iconAnchor: [15, 42]
-  });
+    var icon = L.icon({
+        iconUrl: iconMap[category] || iconMap['Default'],
+        iconSize: [32, 32],
+        iconAnchor: [16, 32]
+    });
 
     this.map.addLayer(MapBase.markersTepoGroup);
     var marker = L.marker([lat, long], { icon: icon }).addTo(MapBase.markersTepoGroup);
@@ -453,7 +458,7 @@ function parseCSV(csvText) {
           console.log(`Adding marker for: ${name} (ID: ${id}) at [${coords.y}, ${coords.x}]`);
 
           // Pass both ID and name to the function
-          MapBase.gameToMapAndMarkTepo(coords.x, coords.y, `${name} (ID: ${id})`);
+          MapBase.gameToMapAndMarkTepo(coords.x, coords.y, `${name} (ID: ${id})`, "Ranches");
         } else {
           console.warn(`Invalid coordinates on line ${index + 2}: ${row}`, coords);
         }
