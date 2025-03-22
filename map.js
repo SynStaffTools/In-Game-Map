@@ -348,9 +348,7 @@ const MapBase = {
     $('.lat-lng-container').css('display', 'block');
 
     $('.lat-lng-container p').html(`
-      Latitude: ${parseFloat(coords.latlng.lat.toFixed(4))}
-      <br>Longitude: ${parseFloat(coords.latlng.lng.toFixed(4))}
-      <br>X: ${xy.long}
+      X: ${xy.long}
       <br>Y: ${xy.lati}
   `);
 
