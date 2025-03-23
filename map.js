@@ -222,6 +222,9 @@ const MapBase = {
     { lat: '2951.023', lng: '1321.770', name: 'Annesburg Gunsmith', category: 'Society Business' },
     { lat: '2917.523', lng: '1381.770', name: 'The Regulators Bounty Guild', category: 'Society Business' },
     { lat: '-1893.479', lng: '1332.963', name: 'The Nightkin Clan', category: 'Society Business' },
+    { lat: '2538.898', lng: '-1277.799', name: 'Saint Denis Theater', category: 'Society Business' },
+    { lat: '-176.193', lng: '628.389', name: 'Valentine Train Co.', category: 'Society Business' },
+    { lat: '-3729.003', lng: '-2601.103', name: 'New Austin Train Co.', category: 'Society Business' },
   ],
   markerCategories: {
     'Gov Shops': 'Gov Shops',
