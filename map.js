@@ -442,7 +442,24 @@ const MapBase = {
         'Ranches': 'images/blip-ranch.png',
         'Gov Shops': 'images/blip-shop.png',
         'Society Business': 'images/blip-society.png',
-        'Default': 'images/blip-default.png'
+        'Default': 'images/blip-default.png',
+        'Stable': 'images/blip-society.png',
+        'Blacksmith': 'images/blip-society.png',
+        'Tailor': 'images/blip-society.png',
+        'Gunsmith': 'images/blip-society.png',
+        'Pharmacy': 'images/blip-society.png',
+        'Bakery': 'images/blip-society.png',
+        'Undertaker': 'images/blip-society.png',
+        'General Store': 'images/blip-society.png',
+        'Saloon': 'images/blip-society.png',
+        'Church': 'images/blip-society.png',
+        'Lumberjack': 'images/blip-society.png',
+        'Mines': 'images/blip-society.png',
+        'Distillery': 'images/blip-society.png',
+        'Bounty Guild': 'images/blip-society.png',
+        'Tribe': 'images/blip-society.png',
+        'Farm': 'images/blip-society.png',
+        'Specialty': 'images/blip-society.png'
     };
 
     // Choose the correct icon based on category, or use the default if not listed
