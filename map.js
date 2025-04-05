@@ -925,7 +925,13 @@ function initializeMap() {
 
   if (params) {
     const { coords1, coords2 } = params;
-    addPointsToMap(coords1, coords2);
+
+    // Assuming you have some method to set up the map view (you may already have it)
+    MapBase.initializeMap(coords1[0], coords1[1]); // Initialize map to center on point 1
+
+    // Call your existing function to place the markers on the map
+    markerPoints(coords1, coords2);
+
     console.log(`Coordinates received and plotted: Point 1 (${coords1}), Point 2 (${coords2})`);
   } else {
     console.log('No coordinates in URL');
