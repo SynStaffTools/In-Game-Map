@@ -340,15 +340,6 @@ const MapBase = {
       wheelDebounceTime: 150,
     }).setView([this.viewportX, this.viewportY], this.viewportZoom);
 
-      // Extract the query parameters for coordinates
-    const urlParams = new URLSearchParams(window.location.search);
-    const point1 = urlParams.get('point1'); // Get point1 from URL
-    const point2 = urlParams.get('point2'); // Get point2 from URL
-
-    // If both points are provided in the URL, call the markerPoints function
-    if (point1 && point2) {
-      MapBase.markerPoints(point1, point2);
-    }
 
     L.control.layers(mapLayers).addTo(MapBase.map);
     $('.leaflet-control-layers-list span').each(function (index, node) {
@@ -905,47 +896,3 @@ window.onload = () => {
   // Initially, you can activate either tool if needed
   // activateRulerTool();  // For now, it's set to ruler tool by default
 };
-
-// Function to parse the URL parameters
-function getUrlParameters() {
-  const params = new URLSearchParams(window.location.search);
-  const point1 = params.get('point1');
-  const point2 = params.get('point2');
-
-  if (point1 && point2) {
-    const coords1 = point1.split(',').map(coord => parseFloat(coord));
-    const coords2 = point2.split(',').map(coord => parseFloat(coord));
-
-    return { coords1, coords2 };
-  }
-  return null;
-}
-
-// Function to add points to the map
-function addPointsToMap(coords1, coords2) {
-  // Assuming you have a function like `addMarkerToMap` to plot a point
-  addMarkerToMap(coords1[0], coords1[1], coords1[2]); // Point 1
-  addMarkerToMap(coords2[0], coords2[1], coords2[2]); // Point 2
-}
-
-// Initialize map
-function initializeMap() {
-  const params = getUrlParameters();
-
-  if (params) {
-    const { coords1, coords2 } = params;
-
-    // Assuming you have some method to set up the map view (you may already have it)
-    MapBase.initializeMap(coords1[0], coords1[1]); // Initialize map to center on point 1
-
-    // Call your existing function to place the markers on the map
-    markerPoints(coords1, coords2);
-
-    console.log(`Coordinates received and plotted: Point 1 (${coords1}), Point 2 (${coords2})`);
-  } else {
-    console.log('No coordinates in URL');
-  }
-}
-
-// Call initializeMap when the page loads
-window.onload = initializeMap;
