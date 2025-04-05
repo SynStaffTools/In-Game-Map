@@ -340,6 +340,15 @@ const MapBase = {
       wheelDebounceTime: 150,
     }).setView([this.viewportX, this.viewportY], this.viewportZoom);
 
+      // Extract the query parameters for coordinates
+    const urlParams = new URLSearchParams(window.location.search);
+    const point1 = urlParams.get('point1'); // Get point1 from URL
+    const point2 = urlParams.get('point2'); // Get point2 from URL
+
+    // If both points are provided in the URL, call the markerPoints function
+    if (point1 && point2) {
+      MapBase.markerPoints(point1, point2);
+    }
 
     L.control.layers(mapLayers).addTo(MapBase.map);
     $('.leaflet-control-layers-list span').each(function (index, node) {
