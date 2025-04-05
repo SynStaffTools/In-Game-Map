@@ -896,3 +896,41 @@ window.onload = () => {
   // Initially, you can activate either tool if needed
   // activateRulerTool();  // For now, it's set to ruler tool by default
 };
+
+// Function to parse the URL parameters
+function getUrlParameters() {
+  const params = new URLSearchParams(window.location.search);
+  const point1 = params.get('point1');
+  const point2 = params.get('point2');
+
+  if (point1 && point2) {
+    const coords1 = point1.split(',').map(coord => parseFloat(coord));
+    const coords2 = point2.split(',').map(coord => parseFloat(coord));
+
+    return { coords1, coords2 };
+  }
+  return null;
+}
+
+// Function to add points to the map
+function addPointsToMap(coords1, coords2) {
+  // Assuming you have a function like `addMarkerToMap` to plot a point
+  addMarkerToMap(coords1[0], coords1[1], coords1[2]); // Point 1
+  addMarkerToMap(coords2[0], coords2[1], coords2[2]); // Point 2
+}
+
+// Initialize map
+function initializeMap() {
+  const params = getUrlParameters();
+
+  if (params) {
+    const { coords1, coords2 } = params;
+    addPointsToMap(coords1, coords2);
+    console.log(`Coordinates received and plotted: Point 1 (${coords1}), Point 2 (${coords2})`);
+  } else {
+    console.log('No coordinates in URL');
+  }
+}
+
+// Call initializeMap when the page loads
+window.onload = initializeMap;
