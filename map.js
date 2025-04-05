@@ -473,24 +473,33 @@ const MapBase = {
     marker.bindPopup(`<b>${name}</b>`);
 },
 
-  markMapTepo: function (lat, long, name, category) {
-    const iconMap = {
-        'Sale Barns': 'images/blip-sale-barn.png',
-        'Ranches': 'images/blip-ranch.png',
-        'Gov Shops': 'images/blip-shop.png',
-        'Default': 'images/blip-default.png'
-    };
+markMapTepo: function (lat, long, name, category) {
+  const iconMap = {
+      'Sale Barns': 'images/blip-sale-barn.png',
+      'Ranches': 'images/blip-ranch.png',
+      'Gov Shops': 'images/blip-shop.png',
+      'Default': 'images/blip-default.png'
+  };
 
-    var icon = L.icon({
-        iconUrl: iconMap[category] || iconMap['Default'],
-        iconSize: [32, 32],
-        iconAnchor: [16, 32]
-    });
+  const iconUrl = iconMap[category] || iconMap['Default'];
 
-    this.map.addLayer(MapBase.markersTepoGroup);
-    var marker = L.marker([lat, long], { icon: icon }).addTo(MapBase.markersTepoGroup);
-    marker.bindPopup(`<b>${name}</b>`);
-  },
+  const icon = L.divIcon({
+      className: 'coord-label-icon',
+      html: `
+          <div class="coord-icon-wrapper">
+              <img src="${iconUrl}" class="coord-icon-img" />
+              ${name === '1' || name === '2' ? `<div class="coord-label">${name}</div>` : ''}
+          </div>
+      `,
+      iconSize: [32, 32],
+      iconAnchor: [16, 32],
+  });
+
+  this.map.addLayer(MapBase.markersTepoGroup);
+  const marker = L.marker([lat, long], { icon: icon }).addTo(MapBase.markersTepoGroup);
+  marker.bindPopup(`<b>${name}</b>`);
+},
+
 
   addCoordsOnMap: function (coords) {
 
@@ -508,17 +517,12 @@ const MapBase = {
   },
 
   markerPoints: function (coords1, coords2) {
-    var c1 = coords1.replace('vector3(', '').replace(')', '');
-    var c1 = c1.split(',');
+    var c1 = coords1.replace('vector3(', '').replace(')', '').split(',');
+    MapBase.gameToMapAndMarkTepo(parseFloat(c1[0]), parseFloat(c1[1]), '1', 'Default');
 
-    MapBase.gameToMapAndMarkTepo(parseFloat(c1[0]), parseFloat(c1[1]));
-
-
-    var c2 = coords2.replace('vector3(', '').replace(')', '');
-    var c2 = c2.split(',');
-
-    MapBase.gameToMapAndMarkTepo(parseFloat(c2[0]), parseFloat(c2[1]));
-  },
+    var c2 = coords2.replace('vector3(', '').replace(')', '').split(',');
+    MapBase.gameToMapAndMarkTepo(parseFloat(c2[0]), parseFloat(c2[1]), '2', 'Default');
+},
 
   filterMarkers: function () {
     this.markersGroup.clearLayers();
