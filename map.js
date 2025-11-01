@@ -962,7 +962,9 @@ const vampireSpawns = [
     {id: 20, x: -1315.231, y: 2364.796, z: 305.610, radius: 50.0, name: "Colter"},
     {id: 21, x: 2967.969, y: 1293.483, z: 43.724, radius: 50.0, name: "Annesburg"},
     {id: 22, x: 1536.595, y: 1321.898, z: 150.023, radius: 50.0, name: "Grizzlies East"},
-    {id: 23, x: 146.030, y: 35.587, z: 102.234, radius: 50.0, name: "Heartlands"}
+    {id: 23, x: 146.030, y: 35.587, z: 102.234, radius: 50.0, name: "Heartlands"},
+    {id: 24, x: -4273.925, y: -3462.518, z: 36.874, radius: 50.0, name: "Fort Mercer"},
+    {id: 25, x: -5530.545, y: -2864.257, z: -5.713, radius: 50.0, name: "Lake Isabella"}
 ];
 
 // Add layer groups for spawns
