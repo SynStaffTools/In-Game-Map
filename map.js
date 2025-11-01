@@ -932,7 +932,10 @@ const zombieSpawns = [
     {id: 29, x: -1999.8850, y: 492.8249, z: 119.3719, radius: 50.0, name: "Little Creek"},
     {id: 30, x: 1428.4412, y: -1211.1064, z: 183.0512, radius: 50.0, name: "Moonstone Pond"},
     {id: 31, x: 172.441, y: 1886.865, z: 203.715, radius: 50.0, name: "Cotorro Springs"},
-    {id: 32, x: -1841.670, y: 1825.084, z: 237.215, radius: 50.0, name: "Lake Isabella"}
+    {id: 32, x: -1841.670, y: 1825.084, z: 237.215, radius: 50.0, name: "Lake Isabella"},
+    {id: 33, x: 2958.790, y: 1433.974, z: 44.998, radius: 50.0, name: "Annesburg"},
+    {id: 34, x: 1462.774, y: 1428.275, z: 170.801, radius: 50.0, name: "Grizzlies East"},
+    {id: 35, x: 268.582, y: -0.994, z: 107.332, radius: 50.0, name: "Heartlands"}
 ];
 
 // Vampire spawn locations
@@ -956,7 +959,10 @@ const vampireSpawns = [
     {id: 17, x: -733.6233, y: -1357.8681, z: 43.9944, radius: 50.0, name: "Blackwater #3"},
     {id: 18, x: -3625.5292, y: -2573.2180, z: -13.7586, radius: 50.0, name: "Armadillo"},
     {id: 19, x: 461.787, y: 2213.301, z: 246.190, radius: 50.0, name: "Wapiti"},
-    {id: 20, x: -1315.231, y: 2364.796, z: 305.610, radius: 50.0, name: "Colter"}
+    {id: 20, x: -1315.231, y: 2364.796, z: 305.610, radius: 50.0, name: "Colter"},
+    {id: 21, x: 2967.969, y: 1293.483, z: 43.724, radius: 50.0, name: "Annesburg"},
+    {id: 22, x: 1536.595, y: 1321.898, z: 150.023, radius: 50.0, name: "Grizzlies East"},
+    {id: 23, x: 146.030, y: 35.587, z: 102.234, radius: 50.0, name: "Heartlands"}
 ];
 
 // Add layer groups for spawns
