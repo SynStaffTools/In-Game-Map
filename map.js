@@ -896,3 +896,218 @@ window.onload = () => {
   // Initially, you can activate either tool if needed
   // activateRulerTool();  // For now, it's set to ruler tool by default
 };
+
+// Add this to your existing map.js file, after the MapBase object initialization
+
+// Zombie spawn locations
+const zombieSpawns = [
+    {id: 5, x: -5281.9921, y: -2930.6301, z: 1.9963, radius: 50.0, name: "TW Bridge"},
+    {id: 2, x: -5022.7128, y: -2694.9648, z: -12.1111, radius: 50.0, name: "TW train crossing"},
+    {id: 3, x: -4574.2744, y: -2975.6218, z: -17.7776, radius: 50.0, name: "New Austin"},
+    {id: 4, x: -4629.6870, y: -2719.4907, z: -10.4171, radius: 50.0, name: "New Austin"},
+    {id: 5, x: -3785.3393, y: -2709.7497, z: -14.3901, radius: 50.0, name: "Outside Dillo South"},
+    {id: 6, x: -2942.9067, y: -2905.9504, z: 59.5215, radius: 50.0, name: "Hill North of Dillo"},
+    {id: 7, x: -2165.7280, y: -2493.8452, z: 65.5920, radius: 50.0, name: "Outside McGavins Ranch"},
+    {id: 8, x: -1554.3774, y: -2449.4182, z: 42.9150, radius: 50.0, name: "Outside Thieves Landing South"},
+    {id: 9, x: -1722.5775, y: -2018.2022, z: 49.4344, radius: 50.0, name: "Montana River North"},
+    {id: 10, x: -1085.1625, y: -1504.9953, z: 65.1802, radius: 50.0, name: "Blackwater South"},
+    {id: 11, x: -1190.1800, y: -1219.8283, z: 73.0413, radius: 50.0, name: "Blackwater North"},
+    {id: 12, x: -1447.7717, y: -538.9178, z: 130.7626, radius: 50.0, name: "Strawberry South"},
+    {id: 13, x: 47.7463, y: 571.3731, z: 134.0064, radius: 50.0, name: "Valentine South"},
+    {id: 14, x: -560.2117, y: 465.2874, z: 98.7862, radius: 50.0, name: "Valentine West"},
+    {id: 15, x: -44.6693, y: 1075.0067, z: 168.5802, radius: 50.0, name: "Valentine North"},
+    {id: 16, x: 790.2110, y: -225.4016, z: 104.7358, radius: 50.0, name: "Mines West"},
+    {id: 17, x: 1409.4272, y: 198.5566, z: 91.964, radius: 50.0, name: "Emerald South"},
+    {id: 18, x: 1424.1964, y: 318.6251, z: 88.5511, radius: 50.0, name: "Emerald North"},
+    {id: 19, x: 1478.1851, y: -1043.6546, z: 54.8668, radius: 50.0, name: "Rhodes East"},
+    {id: 20, x: 931.4141, y: -1150.5604, z: 54.0688, radius: 50.0, name: "Rhodes West"},
+    {id: 21, x: 2166.2207, y: -963.7087, z: 42.7042, radius: 50.0, name: "SD North West"},
+    {id: 22, x: 2133.1782, y: -1321.2801, z: 42.4151, radius: 50.0, name: "SD West"},
+    {id: 23, x: 2589.6855, y: -857.5442, z: 42.1633, radius: 50.0, name: "SD North"},
+    {id: 24, x: 2552.3940, y: -183.2867, z: 43.1472, radius: 50.0, name: "Bluewater Marsh"},
+    {id: 25, x: 2831.2460, y: 930.2058, z: 48.4911, radius: 50.0, name: "Annesburg South"},
+    {id: 26, x: 682.9743, y: 1435.0292, z: 181.0608, radius: 50.0, name: "Cumberland Forest North"},
+    {id: 27, x: -812.0164, y: 1187.8015, z: 156.3528, radius: 50.0, name: "Big Valley"},
+    {id: 28, x: -2685.7973, y: -307.5009, z: 150.0588, radius: 50.0, name: "Owajina"},
+    {id: 29, x: -1999.8850, y: 492.8249, z: 119.3719, radius: 50.0, name: "Little Creek"},
+    {id: 30, x: 1428.4412, y: -1211.1064, z: 183.0512, radius: 50.0, name: "Moonstone Pond"}
+];
+
+// Vampire spawn locations
+const vampireSpawns = [
+    {id: 5, x: 1408.6207, y: -1358.2316, z: 81.0944, radius: 50.0, name: "Rhodes #1"},
+    {id: 2, x: 1240.9350, y: -1253.0350, z: 73.8919, radius: 50.0, name: "Rhodes #2"},
+    {id: 3, x: 2725.0219, y: -1073.9533, z: 46.8910, radius: 50.0, name: "Saint Denis #1"},
+    {id: 4, x: 2831.7788, y: -1229.4315, z: 47.6538, radius: 50.0, name: "Saint Denis #2"},
+    {id: 5, x: 2721.0214, y: -1250.9909, z: 49.9010, radius: 50.0, name: "Saint Denis #3"},
+    {id: 6, x: 2501.9177, y: -1161.3874, z: 49.1520, radius: 50.0, name: "Saint Denis #4"},
+    {id: 7, x: 2538.5368, y: -1465.4688, z: 46.3205, radius: 50.0, name: "Saint Denis #5"},
+    {id: 8, x: 2953.8291, y: -1305.3500, z: 44.4855, radius: 50.0, name: "Annesburg #1"},
+    {id: 9, x: 2864.4455, y: -1348.5880, z: 61.6905, radius: 50.0, name: "Annesburg #2"},
+    {id: 10, x: -215.2876, y: 632.9640, z: 113.1784, radius: 50.0, name: "Valentine #1"},
+    {id: 11, x: -259.8282, y: 793.8422, z: 118.3944, radius: 50.0, name: "Valentine #2"},
+    {id: 12, x: -367.5848, y: 744.4501, z: 116.1424, radius: 50.0, name: "Valentine #3"},
+    {id: 13, x: -1776.0712, y: -415.6216, z: 115.1124, radius: 50.0, name: "Strawberry #1"},
+    {id: 14, x: -1816.8107, y: -397.3391, z: 161.6050, radius: 50.0, name: "Strawberry #2"},
+    {id: 15, x: -798.3451, y: -1234.8284, z: 43.8870, radius: 50.0, name: "Blackwater #1"},
+    {id: 16, x: -865.1370, y: -1351.0942, z: 43.3234, radius: 50.0, name: "Blackwater #2"},
+    {id: 17, x: -733.6233, y: -1357.8681, z: 43.9944, radius: 50.0, name: "Blackwater #3"},
+    {id: 18, x: -3625.5292, y: -2573.2180, z: -13.7586, radius: 50.0, name: "Armadillo"}
+];
+
+// Add layer groups for spawns
+MapBase.zombieSpawnGroup = L.layerGroup();
+MapBase.vampireSpawnGroup = L.layerGroup();
+
+// Function to add spawn markers
+MapBase.addSpawnMarkers = function() {
+    // Clear existing spawn markers
+    this.zombieSpawnGroup.clearLayers();
+    this.vampireSpawnGroup.clearLayers();
+
+    // Add zombie spawns (green markers)
+    zombieSpawns.forEach(spawn => {
+        const mapCoords = this.gameToMapCoords(spawn.x, spawn.y);
+        
+        const icon = L.divIcon({
+            className: 'spawn-marker zombie-spawn',
+            html: `
+                <div style="
+                    width: 20px; 
+                    height: 20px; 
+                    background-color: rgba(0, 255, 0, 0.6); 
+                    border: 2px solid #00ff00; 
+                    border-radius: 50%;
+                    box-shadow: 0 0 10px rgba(0, 255, 0, 0.8);
+                "></div>
+            `,
+            iconSize: [20, 20],
+            iconAnchor: [10, 10]
+        });
+
+        const marker = L.marker([mapCoords.lat, mapCoords.lng], { icon: icon })
+            .addTo(this.zombieSpawnGroup);
+        
+        marker.bindPopup(`
+            <b>Zombie Spawn #${spawn.id}</b><br>
+            ${spawn.name}<br>
+            Radius: ${spawn.radius}m<br>
+            X: ${spawn.x.toFixed(2)}<br>
+            Y: ${spawn.y.toFixed(2)}<br>
+            Z: ${spawn.z.toFixed(2)}
+        `);
+
+        // Add radius circle
+        const radiusCircle = L.circle([mapCoords.lat, mapCoords.lng], {
+            color: '#00ff00',
+            fillColor: '#00ff00',
+            fillOpacity: 0.1,
+            radius: spawn.radius * 0.01552, // Convert game units to map units
+            weight: 1
+        }).addTo(this.zombieSpawnGroup);
+    });
+
+    // Add vampire spawns (red markers)
+    vampireSpawns.forEach(spawn => {
+        const mapCoords = this.gameToMapCoords(spawn.x, spawn.y);
+        
+        const icon = L.divIcon({
+            className: 'spawn-marker vampire-spawn',
+            html: `
+                <div style="
+                    width: 20px; 
+                    height: 20px; 
+                    background-color: rgba(255, 0, 0, 0.6); 
+                    border: 2px solid #ff0000; 
+                    border-radius: 50%;
+                    box-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
+                "></div>
+            `,
+            iconSize: [20, 20],
+            iconAnchor: [10, 10]
+        });
+
+        const marker = L.marker([mapCoords.lat, mapCoords.lng], { icon: icon })
+            .addTo(this.vampireSpawnGroup);
+        
+        marker.bindPopup(`
+            <b>Vampire Spawn #${spawn.id}</b><br>
+            ${spawn.name}<br>
+            Radius: ${spawn.radius}m<br>
+            X: ${spawn.x.toFixed(2)}<br>
+            Y: ${spawn.y.toFixed(2)}<br>
+            Z: ${spawn.z.toFixed(2)}
+        `);
+
+        // Add radius circle
+        const radiusCircle = L.circle([mapCoords.lat, mapCoords.lng], {
+            color: '#ff0000',
+            fillColor: '#ff0000',
+            fillOpacity: 0.1,
+            radius: spawn.radius * 0.01552, // Convert game units to map units
+            weight: 1
+        }).addTo(this.vampireSpawnGroup);
+    });
+
+    // Add layers to map
+    this.map.addLayer(this.zombieSpawnGroup);
+    this.map.addLayer(this.vampireSpawnGroup);
+};
+
+// Helper function to convert game coordinates to map coordinates
+MapBase.gameToMapCoords = function(gameX, gameY) {
+    const lat = (0.01552 * gameY + -63.6);
+    const lng = (0.01552 * gameX + 111.29);
+    return { lat: lat, lng: lng };
+};
+
+// Add toggle controls to the filter section
+MapBase.initSpawnControls = function() {
+    const filterContainer = $('.filters');
+    
+    // Add spawn toggles
+    const spawnControls = $(`
+        <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #ccc;">
+            <h3 style="margin-bottom: 10px;">Spawn Locations</h3>
+            <label>Zombie Spawns</label>
+            <div class="input-checkbox-wrapper">
+                <input class="input-checkbox" type="checkbox" id="toggle-zombies" checked>
+                <label class="input-checkbox-label" for="toggle-zombies"></label>
+            </div><br>
+            <label>Vampire Spawns</label>
+            <div class="input-checkbox-wrapper">
+                <input class="input-checkbox" type="checkbox" id="toggle-vampires" checked>
+                <label class="input-checkbox-label" for="toggle-vampires"></label>
+            </div>
+        </div>
+    `).appendTo(filterContainer);
+
+    // Toggle zombie spawns
+    $('#toggle-zombies').change(function() {
+        if (this.checked) {
+            MapBase.map.addLayer(MapBase.zombieSpawnGroup);
+        } else {
+            MapBase.map.removeLayer(MapBase.zombieSpawnGroup);
+        }
+    });
+
+    // Toggle vampire spawns
+    $('#toggle-vampires').change(function() {
+        if (this.checked) {
+            MapBase.map.addLayer(MapBase.vampireSpawnGroup);
+        } else {
+            MapBase.map.removeLayer(MapBase.vampireSpawnGroup);
+        }
+    });
+};
+
+// Initialize spawn markers after map is ready
+// Add this at the end of MapBase.init() function, just before the closing brace:
+// MapBase.addSpawnMarkers();
+// MapBase.initSpawnControls();
+
+// OR call it manually after MapBase.init() completes:
+$(document).ready(function() {
+    MapBase.addSpawnMarkers();
+    MapBase.initSpawnControls();
+});
